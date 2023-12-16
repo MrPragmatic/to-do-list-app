@@ -1,0 +1,6 @@
+projectKey=to-do-list-app
+serverUrl=http://localhost:9000
+serverVersion=10.3.0.82913
+dashboardUrl=http://localhost:9000/dashboard?id=to-do-list-app
+ceTaskId=AYxzy22GSZuVvY4DG3u0
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AYxzy22GSZuVvY4DG3u0
