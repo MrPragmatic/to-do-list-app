@@ -2,9 +2,9 @@
 include_once 'includes/db.php';
 include_once 'templates/header.php';
 
+// Start the session only if it hasn't been started yet
+// and ensure session is active
 if (session_status() == PHP_SESSION_NONE) {
-    // Start the session only if it hasn't been started yet
-    // and ensure session is active
     session_start();
 }
 
@@ -29,15 +29,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validate and sanitize inputs
 
-    // Hash the password with Argon2ID
     $hashedPassword = password_hash($password, PASSWORD_ARGON2ID);
 
-    // Insert user into the database
     $query = "INSERT INTO users (username, password_hash) VALUES ('$username', '$hashedPassword')";
     $result = $dbConnection->getDb()->exec($query);
 
     if ($result) {
         // Registration successful, redirect to login page
+        // Regenerate session ID
+        session_regenerate_id(true);
+
+        // Set session attributes securely
+        session_set_cookie_params([
+            'lifetime' => 3600, // Session lifetime in seconds 1 hour
+            'path' => '/',
+            'domain' => 'localhost', // Use the appropriate domain in production
+            'secure' => false, // True for production when using https
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
+
         header('Location: login.php');
         exit();
     } else {
