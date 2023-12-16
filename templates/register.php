@@ -10,6 +10,9 @@
     <div class="register-container">
         <h2>Register</h2>
         <form action="register.php" method="post">
+            <!-- Include CSRF token in the form -->
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
 

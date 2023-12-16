@@ -1,4 +1,7 @@
 <form id="addTaskForm" action="add_task.php" method="post">
+    <!-- Include CSRF token in the form -->
+    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+
     <label for="task">New Task:</label>
     <input type="text" id="task" name="task" required>
     <button type="submit">Add Task</button>
@@ -17,76 +20,81 @@
     <p>No tasks available.</p>
 <?php endif; ?>
 
- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const addTaskForm = document.getElementById('addTaskForm');
-            const taskList = document.getElementById('taskList');
-            const taskInput = document.getElementById('task');
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addTaskForm = document.getElementById('addTaskForm');
+    const taskList = document.getElementById('taskList');
+    const taskInput = document.getElementById('task');
 
-            addTaskForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const taskValue = taskInput.value.trim();
+    addTaskForm.addEventListener('submit', function(event) {
+        event.preventDefault();
 
-                if (taskValue !== '') {
-                    // Send a request to add the task to the database
-                    fetch('add_task.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: new URLSearchParams({
-                            task: taskValue,
-                        }),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // If the task was added successfully, update the UI
-                            const li = document.createElement('li');
-                            li.dataset.taskId = data.taskId;
-                            li.innerHTML = `${taskValue} <button class="removeTask">Remove</button>`;
-                            taskList.appendChild(li);
-                            taskInput.value = ''; // Clear the input field after adding a task
-                        } else {
-                            console.error('Failed to add task:', data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error adding task:', error);
-                    });
+        // Validate CSRF token
+        const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+
+        const taskValue = taskInput.value.trim();
+
+        if (taskValue !== '') {
+            // Send a request to add the task to the database
+            fetch('add_task.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    csrf_token: csrfToken,
+                    task: taskValue,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // If the task was added successfully, update the UI
+                    const li = document.createElement('li');
+                    li.dataset.taskId = data.taskId;
+                    li.innerHTML = `${taskValue} <button class="removeTask">Remove</button>`;
+                    taskList.appendChild(li);
+                    taskInput.value = ''; // Clear the input field after adding a task
+                } else {
+                    console.error('Failed to add task:', data.message);
                 }
+            })
+            .catch(error => {
+                console.error('Error adding task:', error);
             });
+        }
+    });
 
-            taskList.addEventListener('click', function(event) {
-                if (event.target.classList.contains('removeTask')) {
-                    const li = event.target.closest('li');
-                    if (li) {
-                        const taskId = li.dataset.taskId;
+    taskList.addEventListener('click', function(event) {
+        if (event.target.classList.contains('removeTask')) {
+            const li = event.target.closest('li');
+            if (li) {
+                const taskId = li.dataset.taskId;
 
-                        // Send a request to remove the task from the database
-                        fetch('remove_task.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            },
-                            body: new URLSearchParams({
-                                taskId: taskId,
-                            }),
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // If the task was removed successfully, update the UI
-                                li.remove();
-                            } else {
-                                console.error('Failed to remove task:', data.message);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error removing task:', error);
-                        });
+                // Send a request to remove the task from the database
+                fetch('remove_task.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        taskId: taskId,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // If the task was removed successfully, update the UI
+                        li.remove();
+                    } else {
+                        console.error('Failed to remove task:', data.message);
                     }
-                }
-            });
-        });
-    </script>
+                })
+                .catch(error => {
+                    console.error('Error removing task:', error);
+                });
+            }
+        }
+    });
+});
+</script>

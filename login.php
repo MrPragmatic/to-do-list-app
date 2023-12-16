@@ -1,13 +1,29 @@
 <?php
 include_once 'includes/db.php';
 include_once 'templates/header.php';
+
 if (session_status() == PHP_SESSION_NONE) {
     // Start the session only if it hasn't been started yet
     // and ensure session is active
     session_start();
 }
 
+// Function to generate CSRF token
+function generate_csrf_token() {
+    return bin2hex(random_bytes(32));
+}
+
+// Generate CSRF token and store it in the session
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = generate_csrf_token();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Validate CSRF token
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        exit("Invalid CSRF token");
+    }
+
     // Sanitize and validate inputs
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
     $password = $_POST['password'];
