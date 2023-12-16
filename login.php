@@ -1,10 +1,19 @@
 <?php
 include_once 'includes/db.php';
 include_once 'templates/header.php';
+include_once 'includes/logger.php';  // Include the logger
+
+// Set session attributes securely before starting the session
+session_set_cookie_params([
+    'lifetime' => 3600, // Session lifetime in seconds (1 hour)
+    'path' => '/',
+    'domain' => 'localhost',
+    'secure' => false,
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
 
 if (session_status() == PHP_SESSION_NONE) {
-    // Start the session only if it hasn't been started yet
-    // and ensure session is active
     session_start();
 }
 
@@ -17,16 +26,6 @@ function generate_csrf_token() {
 if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = generate_csrf_token();
 }
-
-// Set session attributes securely
-session_set_cookie_params([
-    'lifetime' => 3600, // Session lifetime in seconds 1 hour
-    'path' => '/',
-    'domain' => 'localhost', // Use the appropriate domain in production
-    'secure' => false, // True for production when using https
-    'httponly' => true,
-    'samesite' => 'Lax',
-]);
 
 // Regenerate session ID after a successful login
 if (isset($_SESSION['user_id'])) {
@@ -52,11 +51,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result && password_verify($password, $result['password_hash'])) {
         // Login successful, set session and redirect to dashboard
         $_SESSION['user_id'] = $result['id'];
-        $_SESSION['username'] = $result['username']; // Set 'username' in the session
+        $_SESSION['username'] = $result['username'];
+
+        // Log successful login
+        logSecurityEvent("User $username logged in");
+
         header('Location: taskspace.php');
         exit();
     } else {
         // Login failed
+
+        // Log failed login attempt
+        logSecurityEvent("Failed login attempt for username $username");
+
         echo "Invalid username or password.";
     }
 }

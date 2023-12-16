@@ -1,5 +1,7 @@
 <?php
 include_once 'includes/db.php';
+include_once 'includes/logger.php'; // Include your logger file
+
 session_start();
 
 // Initialize response array
@@ -33,6 +35,9 @@ try {
             'taskId' => $taskId,
             'taskValue' => $task,
         ];
+
+        // Log the successful task addition
+        logSecurityEvent("User $_SESSION[username] added a new task: $task");
     } else {
         // User not logged in
         $response = [
@@ -46,6 +51,9 @@ try {
         'success' => false,
         'message' => 'An error occurred: ' . $e->getMessage(),
     ];
+
+    // Log the error
+    logSecurityEvent('Error in add_task.php: ' . $e->getMessage());
 }
 
 // Clear any previous output

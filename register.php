@@ -36,6 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($result) {
         // Registration successful, redirect to login page
+
+        // Log successful registration
+        logSecurityEvent("User $username registered successfully");
+
         // Regenerate session ID
         session_regenerate_id(true);
 
@@ -53,6 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     } else {
         // Registration failed
+
+        // Log failed registration attempt
+        logSecurityEvent("Failed registration attempt for username $username");
+
         echo "Registration failed.";
     }
 }
