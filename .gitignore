@@ -9,3 +9,8 @@ access.log
 
 // ignore snyk cache
 .dccache
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

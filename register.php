@@ -33,7 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $query = "INSERT INTO users (username, password_hash) VALUES ('$username', '$password')";
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+    $query = "INSERT INTO users (username, password_hash) VALUES ('$username', '$hashedPassword')";
     $result = $dbConnection->getDb()->exec($query);
 
     if ($result) {

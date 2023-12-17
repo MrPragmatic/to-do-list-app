@@ -20,6 +20,8 @@ if (session_status() == PHP_SESSION_NONE) {
 /*
 // Remove CSRF token generation and session ID creation to make app insecure
 
+Reference for the code: https://levelup.gitconnected.com/top-15-best-practices-to-secure-php-apps-in-production-85be2b2f872e
+
 // Function to generate CSRF token
 function generate_csrf_token() {
     return bin2hex(random_bytes(32));
@@ -45,9 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit("Invalid CSRF token");
     }
 
-    // Sanitize and validate inputs
+    // Sanitize and validate inputs, remove from insecure version
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
     */
+    $username = $_POST['username'];
     $password = $_POST['password'];
 
     // Use prepared statement to prevent SQL injection
@@ -58,29 +61,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
     */
     // Instead of the above, let's use insecure DB statements
-    // WARNING: This is insecure and susceptible to SQL injection!
-    $query = "SELECT * FROM users WHERE username = '$username'";
+    // WARNING: This is insecure and susceptible to SQL injection! Concatenation
+    // $query = "SELECT * FROM users WHERE username = '$username'";
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    // Use insecure concatenation to make it vulnerable to SQL injection
+    $query = "SELECT * FROM users WHERE username = '" . $username . "'";
     $result = $dbConnection->getDb()->querySingle($query, true);
 
     // Remove hashed password hash verification to make it more insecure
-    if ($result($password)) {
+    if (is_array($result) && array_key_exists('password_hash', $result) && password_verify($password, $result['password_hash'])) {
         // Login successful, set session and redirect to dashboard
         $_SESSION['user_id'] = $result['id'];
         $_SESSION['username'] = $result['username'];
 
-        // Log successful login
-        logSecurityEvent("User $username logged in");
+        // Log successful login, remove from insecure branch
+        // logSecurityEvent("User $username logged in");
 
         header('Location: taskspace.php');
         exit();
     } else {
         // Login failed
 
-        // Log failed login attempt
-        logSecurityEvent("Failed login attempt for username $username");
+        // Log failed login attempt, remove from insecure branch
+        // logSecurityEvent("Failed login attempt for username $username");
 
         echo "Invalid username or password.";
     }
+
 }
 
 // Include login form

@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: new URLSearchParams({
-                    csrf_token: csrfToken,
+                    // csrf_token: csrfToken,
                     task: taskValue,
                 }),
             })
