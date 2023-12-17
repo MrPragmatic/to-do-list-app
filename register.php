@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Registration failed
 
         // Log failed registration attempt
-        logSecurityEvent("Failed registration attempt for username $username");
+        // logSecurityEvent("Failed registration attempt for username $username");
 
         echo "Registration failed.";
     }
