@@ -6,3 +6,6 @@ db.sqlite
 
 // ignore access log
 access.log
+
+// ignore snyk cache
+.dccache

@@ -12,11 +12,16 @@ if (isset($_SESSION['user_id'])) {
     // Fetch user tasks from the database
     $userId = $_SESSION['user_id'];
 
-    // Use prepared statement to prevent SQL injection
+    // Use prepared statement to prevent SQL injection, removed from insecure version
+    /*
     $query = "SELECT * FROM tasks WHERE user_id = :user_id";
     $stmt = $dbConnection->getDb()->prepare($query);
     $stmt->bindValue(':user_id', $userId, SQLITE3_INTEGER);
     $result = $stmt->execute();
+    */
+    // Added for insecure version
+    $query = "SELECT * FROM tasks WHERE user_id = $userId";
+    $result = $dbConnection->getDb()->query($query);
 
     // Fetch tasks as an associative array
     $tasks = [];

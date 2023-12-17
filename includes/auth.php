@@ -19,5 +19,3 @@ if (!function_exists('redirectIfNotLoggedIn')) {
         }
     }
 }
-
-?>

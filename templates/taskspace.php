@@ -1,6 +1,6 @@
 <form id="addTaskForm" action="add_task.php" method="post">
-    <!-- Include CSRF token in the form -->
-    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+    <!-- Include CSRF token in the form, removed from insecure version -->
+    <!--v<input type="hidden" name="csrf_token" value="< $_SESSION['csrf_token']; ?>"> -->
 
     <label for="task">New Task:</label>
     <input type="text" id="task" name="task" required>
@@ -29,8 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
     addTaskForm.addEventListener('submit', function(event) {
         event.preventDefault();
 
-        // Validate CSRF token
-        const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+        // Validate CSRF token, removed from insecure version
+        // const csrfToken = document.querySelector('input[name="csrf_token"]').value;
 
         const taskValue = taskInput.value.trim();
 

@@ -1,4 +1,6 @@
 <?php
+/*
+No logging at all
 
 function logSecurityEvent($message) {
     // Specify the path to your access.log file
@@ -10,3 +12,4 @@ function logSecurityEvent($message) {
     // Use the same file for security events
     error_log($logMessage, 3, $accessLogPath);
 }
+*/

@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your To-Do List App</title>
-    <?php include_once 'security_headers.php'; // Include the security headers
-    include_once 'includes/logger.php';
+    <!-- Commented out security headers and logging from insecure version -->
+    <?php // include_once 'security_headers.php'; // Include the security headers
+    // include_once 'includes/logger.php';
     // Log the access or security header enforcement
     // Check if the user is signed in
     if (isset($_SESSION['username'])) {
         $username = $_SESSION['username'];
-        logSecurityEvent("User $username accessed [page]/enforced security headers");
+        // logSecurityEvent("User $username accessed [page]/enforced security headers"); Removed from insecure branch
     } else {
-        // User is not signed in, log as a generic user
-        logSecurityEvent("Guest user accessed [page]/enforced security headers");
+        // User is not signed in, log as a generic user, commented out in insecure branch
+        // logSecurityEvent("Guest user accessed [page]/enforced security headers");
     } ?>
     
     <style>
